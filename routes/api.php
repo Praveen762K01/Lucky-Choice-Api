@@ -4,6 +4,7 @@ use App\Http\Controllers\BankDetailsController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\ClaimController;
 use App\Http\Controllers\PaymentsController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\RequestsController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UpiDetailsController;
@@ -70,7 +71,8 @@ Route::post('get_completed_request', [RequestsController::class, "get_completed_
 Route::post('update_request', [RequestsController::class, "update_request"]);
 Route::post('get_request_details', [RequestsController::class, "get_request_details"]);
 // URL
-Route::post('get_pdf', [UserController::class, "get_pdf"]);
+Route::post('get_pdf', [PdfController::class, "get_pdf"]);
+Route::post('add_pdf', [PdfController::class, "add_pdf"]);
 // Banner
 Route::post('create_banner', [BannerController::class, "create_banner"]);
 Route::post('get_banner', [BannerController::class, "get_banner"]);
