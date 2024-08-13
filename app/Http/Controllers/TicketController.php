@@ -55,7 +55,6 @@ class TicketController extends Controller
                 "data" => null
             ], 200);
         }
-
     }
 
     function update_ticket(Request $request)
@@ -108,10 +107,7 @@ class TicketController extends Controller
                     "data" => null
                 ], 500);
             }
-
-
         }
-
     }
 
     function get_cart(Request $request)
@@ -141,7 +137,6 @@ class TicketController extends Controller
                         "message" => "Cart fetched",
                         "data" => $purchase
                     ], 200);
-
                 } else {
                     return response()->json([
                         "status" => "500",
@@ -157,7 +152,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
     }
 
     function get_my_tickets(Request $request)
@@ -185,8 +179,6 @@ class TicketController extends Controller
                     "message" => "Tickets fetched",
                     "data" => $purchase
                 ], 200);
-
-
             } else {
                 return response()->json([
                     "status" => "500",
@@ -195,7 +187,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
     }
 
 
@@ -249,7 +240,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
     }
 
     function add_ticket_to_cart(Request $request)
@@ -313,8 +303,6 @@ class TicketController extends Controller
                             "data" => null
                         ], 500);
                     }
-
-
                 } else {
                     return response()->json([
                         "status" => "500",
@@ -330,7 +318,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
     }
 
     function remove_ticket_From_cart(Request $request)
@@ -358,7 +345,6 @@ class TicketController extends Controller
                         "message" => "Ticket removed from cart",
                         "data" => null
                     ], 200);
-
                 } else {
                     return response()->json([
                         "status" => "500",
@@ -374,7 +360,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
     }
 
     function purchase_ticket(Request $request)
@@ -404,7 +389,7 @@ class TicketController extends Controller
                     $count = (int) $ticket->purchase_count;
                     $total = (int) $ticket->max_purchase_limit;
                     $is_visible = (count($purchase) + $count) < $total;
-                    $ticket_amount = (double) $ticket->ticket_price;
+                    $ticket_amount = (float) $ticket->ticket_price;
                     if ((count($purchase) + $count) <= $total) {
                         $ticket->update(
                             [
@@ -468,11 +453,7 @@ class TicketController extends Controller
                     "data" => null
                 ], 500);
             }
-
-
-
         }
-
     }
 
     function get_tickets(Request $request)
@@ -545,7 +526,6 @@ class TicketController extends Controller
                     "message" => "algo winner selected",
                     "data" => null
                 ], 200);
-
             } else {
                 return response()->json([
                     "status" => "500",
@@ -554,8 +534,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
-
     }
 
     function get_purchased_tickets(Request $request)
@@ -581,8 +559,6 @@ class TicketController extends Controller
                     "message" => "Tickets fetched",
                     "data" => $purchase
                 ], 200);
-
-
             } else {
                 return response()->json([
                     "status" => "500",
@@ -591,7 +567,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
     }
     function get_all_purchased_tickets(Request $request)
     {
@@ -615,11 +590,7 @@ class TicketController extends Controller
                 "message" => "Tickets fetched",
                 "data" => $purchase
             ], 200);
-
-
-
         }
-
     }
 
     function choose_manual_winner(Request $request)
@@ -669,7 +640,6 @@ class TicketController extends Controller
                             "data" => null
                         ], 200);
                     }
-
                 } else {
                     return response()->json([
                         "status" => "500",
@@ -677,8 +647,6 @@ class TicketController extends Controller
                         "data" => null
                     ], 500);
                 }
-
-
             } else {
                 return response()->json([
                     "status" => "500",
@@ -687,8 +655,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
-
     }
 
 
@@ -729,7 +695,6 @@ class TicketController extends Controller
                             "data" => null
                         ], 200);
                     }
-
                 } else {
                     return response()->json([
                         "status" => "500",
@@ -737,8 +702,6 @@ class TicketController extends Controller
                         "data" => null
                     ], 500);
                 }
-
-
             } else {
                 return response()->json([
                     "status" => "500",
@@ -747,8 +710,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
-
     }
 
     function get_selected_winner(Request $request)
@@ -777,11 +738,6 @@ class TicketController extends Controller
                     "message" => "selected winners",
                     "data" => $winner
                 ], 200);
-
-
-
-
-
             } else {
                 return response()->json([
                     "status" => "500",
@@ -790,8 +746,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
-
     }
 
     function distribute_prize(Request $request)
@@ -810,30 +764,39 @@ class TicketController extends Controller
 
             if ($ticket) {
                 $winner = WinnerSelectionModel::where("ticket_id", "=", $request->ticket_id)->where("winner", "=", false)->get();
-                for ($i = 0; $i < count($winner); $i++) {
-                    ClaimModel::create([
-                        "user_id" => $winner[$i]->user_id,
-                        "ticket_id" => $request->ticket_id,
-                        "serial_no" => $winner[$i]->serial_no,
-                        "amount" => $ticket->prize_amount,
-                        "paid_amount" => $ticket->ticket_price,
-                        "name" => $ticket->ticket_name,
-                        "is_paid" => false
-                    ]);
-                    $winner[$i]->update(["winner" => true]);
-                    // $user = UserModel::where("user_id", "=", $winner[$i]->user_id)->get();
-                    // $old_wallet = (int) $user[0]->wallet;
-                    // $prize_amount = (int) $ticket->prize_amount;
+                if (((int)  $ticket->winner_count)  == count($winner)) {
+
+                    for ($i = 0; $i < count($winner); $i++) {
+                        ClaimModel::create([
+                            "user_id" => $winner[$i]->user_id,
+                            "ticket_id" => $request->ticket_id,
+                            "serial_no" => $winner[$i]->serial_no,
+                            "amount" => $ticket->prize_amount,
+                            "paid_amount" => $ticket->ticket_price,
+                            "name" => $ticket->ticket_name,
+                            "is_paid" => false
+                        ]);
+                        $winner[$i]->update(["winner" => true]);
+                        // $user = UserModel::where("user_id", "=", $winner[$i]->user_id)->get();
+                        // $old_wallet = (int) $user[0]->wallet;
+                        // $prize_amount = (int) $ticket->prize_amount;
 
 
-                    // $user[0]->update(["wallet" => (string) ($old_wallet + $prize_amount)]);
-                    $ticket->update(["disable" => true]);
+                        // $user[0]->update(["wallet" => (string) ($old_wallet + $prize_amount)]);
+                        $ticket->update(["disable" => true]);
+                    }
+                    return response()->json([
+                        "status" => "200",
+                        "message" => "Prize distributed",
+                        "data" => null
+                    ], 200);
+                } else {
+                    return response()->json([
+                        "status" => "500",
+                        "message" => "Please check winner count",
+                        "data" => null
+                    ], 500);
                 }
-                return response()->json([
-                    "status" => "200",
-                    "message" => "Prize distributed",
-                    "data" => null
-                ], 200);
             } else {
                 return response()->json([
                     "status" => "500",
@@ -842,8 +805,6 @@ class TicketController extends Controller
                 ], 500);
             }
         }
-
-
     }
 
     function get_completed_tickets(Request $request)
@@ -865,5 +826,4 @@ class TicketController extends Controller
             "data" => $tickets
         ], 200);
     }
-
 }
