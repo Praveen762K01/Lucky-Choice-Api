@@ -29,7 +29,8 @@ class RequestsController extends Controller
                 $wallet = (int) $user[0]->wallet;
                 $amount = (double) $request->amount;
                 $total = $wallet - $amount;
-                $user[0]->update(["wallet" => (string) $total]);
+                if ($total>=0) {
+                    $user[0]->update(["wallet" => (string) $total]);
                 RequestModel::create([
                     "user_id" => $request->user_id,
                     "amount" => $request->amount,
@@ -41,6 +42,14 @@ class RequestsController extends Controller
                     "message" => "Request added",
                     "data" => null
                 ], 200);
+                }else{
+                    return response()->json([
+                        "status" => "500",
+                        "message" => "Not enough money in wallet",
+                        "data" => null
+                    ], 500);
+                }
+                
             } else {
                 return response()->json([
                     "status" => "500",
